@@ -26,6 +26,9 @@ export class TheDestinedLambdaStack extends cdk.Stack {
     {
       displayName: "The Destined Lambda CDK Pattern Topic"
     });
+    const topicPolicy = new sns.TopicPolicy(this, 'TopicPolicy', {
+      topics: [topic],
+    });
 
     /**
      * Lambda configured with success and failure destinations
@@ -128,6 +131,21 @@ export class TheDestinedLambdaStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal('apigateway.amazonaws.com')
     });
     topic.grantPublish(apigwSnsRole);
+
+    // adding explicit DENY to topic for publishing, except the api Role
+    const policyStatement = new iam.PolicyStatement({
+      actions: ["sns:Publish"],
+      resources: [topic.topicArn],
+      principals: [new iam.AnyPrincipal()],
+      // notPrincipals: [apigwSnsRole],  // did not work this way
+      effect: iam.Effect.DENY,
+      conditions: {
+        'ArnNotEquals': {
+          'aws:PrincipalArn': [apigwSnsRole.roleArn],
+        }
+      },
+    });
+    topicPolicy.document.addStatements(policyStatement);
 
     //Because this isn't a proxy integration, we need to define our response model
     const responseModel = gateway.addModel('ResponseModel', {
