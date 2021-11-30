@@ -28,6 +28,12 @@ export class TheSinglePurposeFunctionStack extends cdk.Stack {
       handler: 'multiply.handler',                
     });
 
+    const divideLambda = new lambda.Function(this, 'divideLambdaHandler', {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromAsset('lambda-fns/single-purpose-function'),
+      handler: 'divide.handler',
+    });
+
 
     /**
      * Routes defined individually on API Gateway
@@ -41,5 +47,6 @@ export class TheSinglePurposeFunctionStack extends cdk.Stack {
     gateway.root.resourceForPath('add').addMethod('GET', new apigw.LambdaIntegration(addLambda));
     gateway.root.resourceForPath('subtract').addMethod('GET', new apigw.LambdaIntegration(subtractLambda));
     gateway.root.resourceForPath('multiply').addMethod('GET', new apigw.LambdaIntegration(multiplyLambda));
+    gateway.root.resourceForPath('divide').addMethod('GET', new apigw.LambdaIntegration(divideLambda));
   }
 }

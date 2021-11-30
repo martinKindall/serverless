@@ -7,5 +7,5 @@ import { TheSinglePurposeFunctionStack } from '../lib/the-single-purpose-functio
 
 const app = new cdk.App();
 new TheLambdalithStack(app, 'TheLambdaLithStack');
-new TheFatLambdaStack(app, 'TheFatLambdaStack');
+// new TheFatLambdaStack(app, 'TheFatLambdaStack');
 new TheSinglePurposeFunctionStack(app, 'TheSinglePurposeFunctionStack');
